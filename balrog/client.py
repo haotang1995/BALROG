@@ -160,6 +160,8 @@ class OpenAIWrapper(LLMClientWrapper):
         converted_messages = []
         for msg in messages:
             new_content = [{"type": "text", "text": msg.content}]
+            if 'mistral' in self.model_id.lower() and msg.role == 'assistant':
+                new_content = new_content[0]['text']
             if msg.attachment is not None:
                 new_content.append(process_image_openai(msg.attachment))
             if self.alternate_roles and converted_messages and converted_messages[-1]["role"] == msg.role:
