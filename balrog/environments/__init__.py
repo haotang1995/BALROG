@@ -22,8 +22,10 @@ def make_env(env_name, task, config, render_mode=None):
     """
     if env_name == "nle":
         from balrog.environments.nle.nle_env import make_nle_env
-
         base_env = make_nle_env(env_name, task, config, render_mode=render_mode)
+    if env_name == "nlehao":
+        from balrog.environments.nlehao.nle_env import make_nlehao_env
+        base_env = make_nlehao_env(env_name, task, config, render_mode=render_mode)
     elif env_name == "minihack":
         from balrog.environments.minihack.minihack_env import make_minihack_env
 

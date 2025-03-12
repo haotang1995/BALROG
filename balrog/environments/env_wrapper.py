@@ -28,7 +28,7 @@ class EnvWrapper(gym.Wrapper):
         return processed_obs, reward, terminated, truncated, info
 
     def _process_observation(self, obs):
-        if self.env_name in ["nle", "minihack"]:
+        if self.env_name in ["nle", "nlehao", "minihack"]:
             obs = obs
         elif self.env_name == "babyai":
             obs = obs
@@ -54,7 +54,9 @@ class EnvWrapper(gym.Wrapper):
     def get_instruction_prompt(self, instructions=None):
         if self.env_name == "nle":
             from balrog.environments.nle import get_instruction_prompt
-
+            return get_instruction_prompt()
+        elif self.env_name == "nlehao":
+            from balrog.environments.nlehao import get_instruction_prompt
             return get_instruction_prompt()
         elif self.env_name == "minihack":
             from balrog.environments.minihack import get_instruction_prompt

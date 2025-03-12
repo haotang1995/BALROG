@@ -1,4 +1,5 @@
 from .history import HistoryPromptBuilder
+from .nle_map import NLEMapPromptBuilder
 
 
 def create_prompt_builder(config):
@@ -17,7 +18,11 @@ def create_prompt_builder(config):
         PromptBuilder: An instance of a prompt builder configured with the specified
             history limits and any additional parameters defined in the config.
     """
-    return HistoryPromptBuilder(
+    if 'prompt_builder' in config and config.prompt_builder == 'nle_map':
+        builder = NLEMapPromptBuilder
+    else:
+        builder = HistoryPromptBuilder
+    return builder(
         max_history=config.max_history,
         max_image_history=config.max_image_history,
         max_cot_history=config.max_cot_history,

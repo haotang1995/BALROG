@@ -1,0 +1,56 @@
+agent: 
+  type: nle_map_naive # Type of agent to use (e.g., 'naive', 'cot', etc.)
+  prompt_builder: nle_map # Prompt builder to use (e.g., 'nle', 'nle_map', etc.)
+  remember_cot: True     # Whether the agent should remember its reasoning across turns
+  max_history: 16        # Maximum number of previous turns to keep in the dialogue history
+  max_image_history: 0   # Maximum number of images to keep in the history
+  max_cot_history: 1     # Maximum number of chain-of-thought steps to keep in history (if using 'cot' type of agent)
+  max_icl_history: 1000   # Maximum number of ICL steps to keep in history (if using 'few_shot' type of agent)
+  cache_icl: False
+
+eval:
+  output_dir: "results"  # Directory where evaluation results will be saved
+  resume_from: null      # Path to to the incomplete results file to resume an incomplete run
+  num_workers: 5        # Number of parallel workers. Increase for faster evaluation if you have enough resources
+  num_episodes:          # Minimum number of episodes to run for each environment. You can optionally increase this to get more reliable results
+    nlehao: 5               # Number of episodes for the 'nle' environment
+  max_steps_per_episode: null   # Max steps per episode; null uses the environment default
+  save_trajectories: True       # Whether to save agent trajectories (text only)
+  save_images: False            # Whether to save images from the environment
+  icl_episodes: 1
+  icl_dataset: records
+  feedback_on_invalid_action : True       # Whether to provide feedback on invalid actions
+
+client:
+  client_name: vllm # LLM client to use (e.g., 'openai', 'gemini', 'claude')
+  model_id: meta-llama/Llama-3.2-1B-Instruct              # Model identifier (e.g., 'gpt-4', 'gpt-3.5-turbo')
+  base_url: http://localhost:8080/v1   # Base URL for the API (if using a local server)
+  generate_kwargs:
+    temperature: 0.0            # Sampling temperature; 0.0 makes the output deterministic
+    max_tokens: 4096            # Max tokens to generate in the response
+  timeout: 60                   # Timeout for API requests in seconds
+  max_retries: 5                # Max number of retries for failed API calls
+  delay: 2                      # Exponential backoff factor between retries in seconds
+  alternate_roles: False        # Whether the client requires alternating between the agent and the environment
+
+envs:
+  names: nlehao   # Environments to evaluate, separated by hyphens
+  env_kwargs:
+    seed: null                # Random seed; null means a random seed is used
+  nle_kwargs:
+    character: "@"            # Character representing the agent in NLE
+    max_episode_steps: 100_000  # Max steps per episode in NLE
+    no_progress_timeout: 150    # Timeout for no progress in NLE
+    savedir: null               # Directory to save NLE data; null disables saving
+    save_ttyrec_every: 0        # Frequency of saving TTY recordings
+    skip_more: False            # Whether to skip the 'more' prompt in NLE
+    prompt_mode: map            # Prompt mode for NLE
+
+tasks:
+  nlehao_tasks:
+    - NetHackChallenge-v0       # Tasks for the NLE environment
+
+hydra:
+  run:
+    dir: .                     # Set the working directory to the current directory
+  output_subdir: null          # Do not use an output subdirectory

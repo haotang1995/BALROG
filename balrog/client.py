@@ -182,6 +182,8 @@ class OpenAIWrapper(LLMClientWrapper):
         self._initialize_client()
         converted_messages = self.convert_messages(messages)
 
+        self._print_messages(converted_messages)
+
         def api_call():
             return self.client.chat.completions.create(
                 messages=converted_messages,
@@ -200,6 +202,19 @@ class OpenAIWrapper(LLMClientWrapper):
             output_tokens=response.usage.completion_tokens,
             reasoning=None,
         )
+
+    def _print_messages(self, messages):
+        """Print the messages in a human-readable format.
+
+        Args:
+            messages (list): A list of messages to print.
+        """
+        for msg in messages:
+            role = msg.get("role", "unknown")
+            content = msg.get("content", [])[0].get("text", "")
+            logger.info('#'+'-'*20+' '+ role+' '+ '-'*20)
+            logger.info(content)
+        logger.info('')
 
 
 class GoogleGenerativeAIWrapper(LLMClientWrapper):
